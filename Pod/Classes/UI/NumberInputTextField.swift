@@ -22,8 +22,17 @@ open class NumberInputTextField: StylizedTextField {
      - note: This card number may be incomplete and invalid while the user is entering a card number. Be sure to validate it against a proper card type before assuming it is valid.
      */
     open var cardNumber: Number {
-        let textFieldTextUnformatted = cardNumberFormatter.unformat(cardNumber: text ?? "")
+        let textFieldTextUnformatted = cardNumberFormatter.unformat(cardNumber: cardNumberText)
         return Number(rawValue: textFieldTextUnformatted)
+    }
+    
+    
+    open var cardNumberText: String {
+        if #available(iOS 9.0, *) {
+            return text?.applyingTransform(.toLatin, reverse: false) ?? ""
+        } else {
+            return text ?? ""
+        }
     }
     
     /**
@@ -91,7 +100,7 @@ open class NumberInputTextField: StylizedTextField {
     
     open override func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         // Current text in text field, formatted and unformatted:
-        let textFieldTextFormatted = NSString(string: textField.text ?? "")
+        let textFieldTextFormatted = NSString(string: cardNumberText)
         // Text in text field after applying changes, formatted and unformatted:
         let newTextFormatted = textFieldTextFormatted.replacingCharacters(in: range, with: string)
         let newTextUnformatted = cardNumberFormatter.unformat(cardNumber: newTextFormatted)
